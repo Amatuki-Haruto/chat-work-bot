@@ -177,6 +177,10 @@ class ChatworkDateChangeBot:
         
         # 日付変更通知を送信
         self.notify_date_change(delay_minutes)
+        
+        # 1分後に話題提供メッセージを送信
+        print("⏰ 1分後に話題提供メッセージを送信します...")
+        threading.Timer(60, self.send_topic_message).start()
     
     def notify_date_change(self, delay_minutes=0):
         """日付変更通知を送信"""
@@ -193,6 +197,15 @@ class ChatworkDateChangeBot:
         """テスト時報を送信"""
         print("🧪 テスト時報を実行します...")
         self.notify_date_change()
+    
+    def send_topic_message(self):
+        """話題提供メッセージを送信"""
+        print("💬 話題提供メッセージを送信します...")
+        success = self.send_message(self.config.TOPIC_MESSAGE)
+        if success:
+            print("✅ 話題提供メッセージを送信しました")
+        else:
+            print("❌ 話題提供メッセージの送信に失敗しました")
     
     def start_webhook_server(self):
         """Webhookサーバーを開始"""

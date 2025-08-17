@@ -24,6 +24,7 @@ class Config:
     # メッセージ設定
     GAME_ANNOUNCEMENT_MESSAGE = "[info][title]日付変更予測ゲームのお知らせ[/title]\nどもども、みんな大好き遅れ時報君だよ、遅くまで起きてるみんなにゲームを用意したんだ\n前は意図せず遅れてたけど今回からはわざと遅れてゲーム風になるようにしたよ\n今回はまだ改造途中で本格的にはスタートしないけど、一応追加しましたぁ\n正式の実装されたら何回正解したら変人に一つ命令できるとかくだらないものが手に入るかもね\n\nでは予測スタート！0〜5分の間だよ！[/info]"
     DATE_CHANGE_MESSAGE = "[info][title]日付変更！[/title]\n今日も元気にお知らせ！新しい一日の始まりだね！\n今日、{date}は{delay}分遅れ！当てられたかな？[/info]"
+    TOPIC_MESSAGE = "[info][title]今日の話題[/title]\nここに話題を入力してください！\n毎回コードを見に来て変更してくださいね！[/info]"
     
     # API設定
     CHATWORK_API_BASE_URL = "https://api.chatwork.com/v2"

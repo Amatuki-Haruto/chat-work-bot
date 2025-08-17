@@ -37,34 +37,77 @@ class ChatworkDateChangeBot:
             # リクエストデータを取得
             data = request_data.get_json()
             
+            print(f"🔍 Webhook受信開始")
+            print(f"📨 リクエストヘッダー: {dict(request_data.headers)}")
+            print(f"📨 リクエストボディ: {data}")
+            
             if not data:
                 print("❌ Webhookデータが空です")
                 return jsonify({'status': 'error', 'message': 'No data received'}), 400
             
-            # メッセージイベントをチェック
+            # ChatworkのWebhookデータ形式に対応
+            message_body = None
+            account_id = None
+            account_name = None
+            
+            # 形式1: 標準的なメッセージ形式
             if 'message' in data:
                 message_data = data['message']
+                print(f"📝 メッセージデータ: {message_data}")
                 
-                # メッセージの内容をチェック
                 if 'body' in message_data and 'account' in message_data:
                     message_body = message_data['body'].strip()
                     account_id = str(message_data['account']['account_id'])
                     account_name = message_data['account']['name']
+            
+            # 形式2: Chatwork特有の形式
+            elif 'webhook_event_type' in data and data['webhook_event_type'] == 'message_created':
+                message_data = data.get('webhook_event_data', {})
+                print(f"📝 Chatwork Webhookデータ: {message_data}")
+                
+                if 'body' in message_data and 'account' in message_data:
+                    message_body = message_data['body'].strip()
+                    account_id = str(message_data['account']['account_id'])
+                    account_name = message_data['account']['name']
+            
+            # 形式3: 直接的なメッセージ形式
+            elif 'body' in data and 'account' in data:
+                message_body = data['body'].strip()
+                account_id = str(data['account']['account_id'])
+                account_name = data['account']['name']
+                print(f"📝 直接メッセージデータ: {data}")
+            
+            # データが取得できたかチェック
+            if message_body and account_id and account_name:
+                print(f"📨 Webhook受信: {account_name} -> {message_body}")
+                print(f"👤 アカウントID: {account_id}")
+                print(f"🔑 設定された権限者ID: {self.config.TEST_NOTIFICATION_USER_ID}")
+                print(f"✅ ID一致: {account_id == self.config.TEST_NOTIFICATION_USER_ID}")
+                
+                # テスト時報コマンドをチェック
+                if (message_body == "テスト時報" and 
+                    account_id == self.config.TEST_NOTIFICATION_USER_ID):
                     
-                    print(f"📨 Webhook受信: {account_name} -> {message_body}")
-                    
-                    # テスト時報コマンドをチェック
-                    if (message_body == "テスト時報" and 
-                        account_id == self.config.TEST_NOTIFICATION_USER_ID):
-                        
-                        print(f"🧪 ユーザー {account_name} からテスト時報コマンドを受信しました")
-                        # 別スレッドでテスト時報を実行
-                        threading.Thread(target=self.test_notification, daemon=True).start()
+                    print(f"🧪 ユーザー {account_name} からテスト時報コマンドを受信しました")
+                    # 別スレッドでテスト時報を実行
+                    threading.Thread(target=self.test_notification, daemon=True).start()
+                else:
+                    print(f"❌ コマンドチェック失敗:")
+                    print(f"   - メッセージ内容: '{message_body}' == 'テスト時報' → {message_body == 'テスト時報'}")
+                    print(f"   - アカウントID: '{account_id}' == '{self.config.TEST_NOTIFICATION_USER_ID}' → {account_id == self.config.TEST_NOTIFICATION_USER_ID}")
+            else:
+                print(f"❌ メッセージデータの形式が不正:")
+                print(f"   - message_body: {message_body}")
+                print(f"   - account_id: {account_id}")
+                print(f"   - account_name: {account_name}")
+                print(f"   - 利用可能なキー: {list(data.keys()) if data else 'None'}")
             
             return jsonify({'status': 'success'}), 200
             
         except Exception as e:
             print(f"❌ Webhook処理エラー: {str(e)}")
+            import traceback
+            print(f"📋 スタックトレース: {traceback.format_exc()}")
             return jsonify({'status': 'error', 'message': str(e)}), 500
     
     def send_message(self, message):

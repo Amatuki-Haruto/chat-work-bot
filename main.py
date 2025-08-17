@@ -34,10 +34,24 @@ class ChatworkDateChangeBot:
     def handle_webhook(self, request_data):
         """Webhookからの通知を処理"""
         try:
+            # Webhookトークンの検証
+            auth_header = request_data.headers.get('X-ChatWorkWebhookSignature', '')
+            if not auth_header:
+                print("❌ Webhook認証ヘッダーがありません")
+                return jsonify({'status': 'error', 'message': 'Missing authentication header'}), 401
+            
+            # トークンの検証（簡易的な検証）
+            if self.config.WEBHOOK_SECRET and self.config.WEBHOOK_SECRET not in auth_header:
+                print(f"❌ Webhookトークンが一致しません")
+                print(f"   受信: {auth_header}")
+                print(f"   期待: {self.config.WEBHOOK_SECRET}")
+                return jsonify({'status': 'error', 'message': 'Invalid token'}), 401
+            
             # リクエストデータを取得
             data = request_data.get_json()
             
             print(f"🔍 Webhook受信開始")
+            print(f"🔐 認証ヘッダー: {auth_header}")
             print(f"📨 リクエストヘッダー: {dict(request_data.headers)}")
             print(f"📨 リクエストボディ: {data}")
             
@@ -60,7 +74,7 @@ class ChatworkDateChangeBot:
                     account_id = str(message_data['account']['account_id'])
                     account_name = message_data['account']['name']
             
-            # 形式2: Chatwork特有の形式
+            # 形式2: Chatwork特有の形式（`webhook_event_type`）
             elif 'webhook_event_type' in data and data['webhook_event_type'] == 'message_created':
                 message_data = data.get('webhook_event_data', {})
                 print(f"📝 Chatwork Webhookデータ: {message_data}")

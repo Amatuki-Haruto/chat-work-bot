@@ -16,7 +16,7 @@ class Config:
     WEBHOOK_ENABLED = os.getenv('WEBHOOK_ENABLED', 'true').lower() == 'true'
     # Railwayでは環境変数PORTが自動で設定される
     WEBHOOK_PORT = int(os.getenv('PORT', os.getenv('WEBHOOK_PORT', '8080')))
-    WEBHOOK_SECRET = os.getenv('WEBHOOK_SECRET', '')
+    WEBHOOK_SECRET = os.getenv('WEBHOOK_SECRET', 'YQMXkrEged4QTepDiaJyma/CIojyOZpCFVEdXhphQpU=')
     
     # 通知設定
     NOTIFICATION_TIME = "00:00"  # 日付変更時刻（24時間形式）

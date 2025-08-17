@@ -170,10 +170,17 @@ class ChatworkDateChangeBot:
         
         print(f"🎯 日付変更予測ゲーム結果: {delay_minutes}分遅れ")
         
-        # 遅延時間分待機
+        # 遅延時間分待機（非同期で実行）
         if delay_minutes > 0:
-            print(f"⏳ {delay_minutes}分待機中...")
-            time.sleep(delay_minutes * 60)
+            print(f"⏳ {delay_minutes}分後に日付変更通知を送信します...")
+            threading.Timer(delay_minutes * 60, self.send_delayed_notification, args=[delay_minutes]).start()
+        else:
+            # 遅延なしの場合は即座に送信
+            self.send_delayed_notification(delay_minutes)
+    
+    def send_delayed_notification(self, delay_minutes):
+        """遅延後の日付変更通知を送信"""
+        print(f"📅 遅延時間({delay_minutes}分)経過、日付変更通知を送信します...")
         
         # 日付変更通知を送信
         self.notify_date_change(delay_minutes)
@@ -196,7 +203,31 @@ class ChatworkDateChangeBot:
     def test_notification(self):
         """テスト時報を送信"""
         print("🧪 テスト時報を実行します...")
-        self.notify_date_change()
+        
+        # テスト用の一連のプロセスを実行
+        import random
+        delay_minutes = random.randint(0, 5)  # 0〜5分のランダムな遅延
+        
+        print(f"🎯 テスト時報予測ゲーム結果: {delay_minutes}分遅れ")
+        
+        # 遅延時間分待機（非同期で実行）
+        if delay_minutes > 0:
+            print(f"⏳ {delay_minutes}分後にテスト時報を送信します...")
+            threading.Timer(delay_minutes * 60, self.send_test_delayed_notification, args=[delay_minutes]).start()
+        else:
+            # 遅延なしの場合は即座に送信
+            self.send_test_delayed_notification(delay_minutes)
+    
+    def send_test_delayed_notification(self, delay_minutes):
+        """遅延後のテスト時報を送信"""
+        print(f"📅 テスト時報遅延時間({delay_minutes}分)経過、日付変更通知を送信します...")
+        
+        # 日付変更通知を送信
+        self.notify_date_change(delay_minutes)
+        
+        # 1分後に話題提供メッセージを送信
+        print("⏰ 1分後に話題提供メッセージを送信します...")
+        threading.Timer(60, self.send_topic_message).start()
     
     def send_topic_message(self):
         """話題提供メッセージを送信"""

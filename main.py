@@ -62,13 +62,13 @@ class ChatworkDateChangeBot:
             
             # 形式2: Chatwork特有の形式（`webhook_event_type`）
             elif 'webhook_event_type' in data and data['webhook_event_type'] == 'message_created':
-                message_data = data.get('webhook_event_data', {})
+                message_data = data.get('webhook_event', {})
                 print(f"📝 Chatwork Webhookデータ: {message_data}")
                 
-                if 'body' in message_data and 'account' in message_data:
+                if 'body' in message_data and 'account_id' in message_data:
                     message_body = message_data['body'].strip()
-                    account_id = str(message_data['account']['account_id'])
-                    account_name = message_data['account']['name']
+                    account_id = str(message_data['account_id'])
+                    account_name = f"User_{account_id}"  # 名前が含まれていない場合はIDを使用
             
             # 形式3: 直接的なメッセージ形式
             elif 'body' in data and 'account' in data:

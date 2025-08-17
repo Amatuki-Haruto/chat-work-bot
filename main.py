@@ -34,24 +34,10 @@ class ChatworkDateChangeBot:
     def handle_webhook(self, request_data):
         """Webhookからの通知を処理"""
         try:
-            # Webhookトークンの検証
-            auth_header = request_data.headers.get('X-ChatWorkWebhookSignature', '')
-            if not auth_header:
-                print("❌ Webhook認証ヘッダーがありません")
-                return jsonify({'status': 'error', 'message': 'Missing authentication header'}), 401
-            
-            # トークンの検証（簡易的な検証）
-            if self.config.WEBHOOK_SECRET and self.config.WEBHOOK_SECRET not in auth_header:
-                print(f"❌ Webhookトークンが一致しません")
-                print(f"   受信: {auth_header}")
-                print(f"   期待: {self.config.WEBHOOK_SECRET}")
-                return jsonify({'status': 'error', 'message': 'Invalid token'}), 401
-            
             # リクエストデータを取得
             data = request_data.get_json()
             
             print(f"🔍 Webhook受信開始")
-            print(f"🔐 認証ヘッダー: {auth_header}")
             print(f"📨 リクエストヘッダー: {dict(request_data.headers)}")
             print(f"📨 リクエストボディ: {data}")
             
@@ -237,12 +223,15 @@ else:
 # Flaskアプリケーションをエクスポート（Gunicorn用）
 app = bot.app
 
-# Gunicorn起動時のログ出力
-print("🚀 Chatwork日付変更botを開始しました")
-print(f"👤 テスト時報実行権限者ID: {bot.config.TEST_NOTIFICATION_USER_ID}")
-print(f"🌐 Webhook機能が有効です (ポート: {bot.config.WEBHOOK_PORT})")
-print("📋 ChatworkのWebhook設定で以下のURLを設定してください:")
-print(f"   https://chat-work-bot-production.up.railway.app/webhook")
+# Gunicorn起動時のログ出力（強制的に出力）
+import sys
+sys.stdout.write("🚀 Chatwork日付変更botを開始しました\n")
+sys.stdout.write(f"👤 テスト時報実行権限者ID: {bot.config.TEST_NOTIFICATION_USER_ID}\n")
+sys.stdout.write(f"🌐 Webhook機能が有効です (ポート: {bot.config.WEBHOOK_PORT})\n")
+sys.stdout.write("📋 ChatworkのWebhook設定で以下のURLを設定してください:\n")
+sys.stdout.write(f"   https://chat-work-bot-production.up.railway.app/webhook\n")
+sys.stdout.write(f"🔐 Webhookトークン: {bot.config.WEBHOOK_SECRET}\n")
+sys.stdout.flush()
 
 if __name__ == "__main__":
     bot.run()

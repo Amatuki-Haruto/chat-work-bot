@@ -208,8 +208,27 @@ class ChatworkDateChangeBot:
 # Flaskアプリケーションのインスタンスを作成
 bot = ChatworkDateChangeBot()
 
+# botの初期化を完了
+if bot.config.CHATWORK_API_TOKEN and bot.config.CHATWORK_ROOM_ID and bot.config.TEST_NOTIFICATION_USER_ID:
+    # スケジュール設定
+    bot.schedule_daily_notification()
+    print("⏰ 毎日 00:00 に日付変更通知をスケジュールしました")
+    print("⏳ 日付変更時刻まで待機中...")
+else:
+    print("❌ 必要な環境変数が設定されていません")
+    print(f"   - CHATWORK_API_TOKEN: {'設定済み' if bot.config.CHATWORK_API_TOKEN else '未設定'}")
+    print(f"   - CHATWORK_ROOM_ID: {'設定済み' if bot.config.CHATWORK_ROOM_ID else '未設定'}")
+    print(f"   - TEST_NOTIFICATION_USER_ID: {'設定済み' if bot.config.TEST_NOTIFICATION_USER_ID else '未設定'}")
+
 # Flaskアプリケーションをエクスポート（Gunicorn用）
 app = bot.app
+
+# Gunicorn起動時のログ出力
+print("🚀 Chatwork日付変更botを開始しました")
+print(f"👤 テスト時報実行権限者ID: {bot.config.TEST_NOTIFICATION_USER_ID}")
+print(f"🌐 Webhook機能が有効です (ポート: {bot.config.WEBHOOK_PORT})")
+print("📋 ChatworkのWebhook設定で以下のURLを設定してください:")
+print(f"   https://chat-work-bot-production.up.railway.app/webhook")
 
 if __name__ == "__main__":
     bot.run()

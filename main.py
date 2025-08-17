@@ -146,7 +146,7 @@ class ChatworkDateChangeBot:
     def notify_date_change(self):
         """日付変更通知を送信"""
         current_date = datetime.now().strftime("%Y年%m月%d日")
-        message = f"{self.config.DATE_CHANGE_MESSAGE}\n📅 {current_date}"
+        message = self.config.DATE_CHANGE_MESSAGE.format(date=current_date)
         
         success = self.send_message(message)
         if success:

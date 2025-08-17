@@ -22,7 +22,7 @@ class Config:
     NOTIFICATION_TIME = "00:00"  # 日付変更時刻（24時間形式）
     
     # メッセージ設定
-    DATE_CHANGE_MESSAGE = "🎉 新しい日が始まりました！今日も一日頑張りましょう！"
+    DATE_CHANGE_MESSAGE = "[info][title]日付変更！[/title]\n 新しい日が始まりました！今日も一日頑張りましょう！\n📅 {date}[/info]"
     
     # API設定
     CHATWORK_API_BASE_URL = "https://api.chatwork.com/v2"

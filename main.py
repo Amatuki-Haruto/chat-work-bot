@@ -103,6 +103,14 @@ class ChatworkDateChangeBot:
                     print(f"🧪 ユーザー {account_name} からテスト時報コマンドを受信しました")
                     # 別スレッドでテスト時報を実行
                     threading.Thread(target=self.test_notification, daemon=True).start()
+                
+                # テスト予告コマンドをチェック
+                elif (message_body == "テスト予告" and 
+                      account_id == self.config.TEST_NOTIFICATION_USER_ID):
+                    
+                    print(f"🎮 ユーザー {account_name} からテスト予告コマンドを受信しました")
+                    # 別スレッドでテスト予告を実行
+                    threading.Thread(target=self.test_announcement, daemon=True).start()
                 else:
                     print(f"❌ コマンドチェック失敗:")
                     print(f"   - メッセージ内容: '{message_body}' == 'テスト時報' → {message_body == 'テスト時報'}")
@@ -228,6 +236,15 @@ class ChatworkDateChangeBot:
         # 1分後に話題提供メッセージを送信
         print("⏰ 1分後に話題提供メッセージを送信します...")
         threading.Timer(60, self.send_topic_message).start()
+    
+    def test_announcement(self):
+        """テスト予告を送信"""
+        print("🎮 テスト予告を実行します...")
+        success = self.send_message(self.config.GAME_ANNOUNCEMENT_MESSAGE)
+        if success:
+            print("✅ テスト予告メッセージを送信しました")
+        else:
+            print("❌ テスト予告メッセージの送信に失敗しました")
     
     def send_topic_message(self):
         """話題提供メッセージを送信"""

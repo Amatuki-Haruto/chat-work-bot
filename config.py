@@ -22,7 +22,8 @@ class Config:
     NOTIFICATION_TIME = "00:00"  # 日付変更時刻（24時間形式）
     
     # メッセージ設定
-    DATE_CHANGE_MESSAGE = "[info][title]日付変更！[/title]\n 新しい日が始まりました！今日も一日頑張りましょう！\n📅 {date}[/info]"
+    GAME_ANNOUNCEMENT_MESSAGE = "[info][title]日付変更予測ゲームのお知らせ[/title]\nどもども、みんな大好き遅れ時報君だよ、遅くまで起きてるみんなにゲームを用意したんだ\n前は意図せず遅れてたけど今回からはわざと遅れてゲーム風になるようにしたよ\n今回はまだ改造途中で本格的にはスタートしないけど、一応追加しましたぁ\n正式の実装されたら何回正解したら変人に一つ命令できるとかくだらないものが手に入るかもね\n\nでは予測スタート！0〜5分の間だよ！[/info]"
+    DATE_CHANGE_MESSAGE = "[info][title]日付変更！[/title]\n今日も元気にお知らせ！新しい一日の始まりだね！\n今日、{date}は{delay}分遅れ！当てられたかな？[/info]"
     
     # API設定
     CHATWORK_API_BASE_URL = "https://api.chatwork.com/v2"

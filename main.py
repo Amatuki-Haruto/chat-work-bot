@@ -143,14 +143,49 @@ class ChatworkDateChangeBot:
             print(f"❌ エラーが発生しました: {str(e)}")
             return False
     
-    def notify_date_change(self):
+    def schedule_daily_notification(self):
+        """毎日の日付変更時刻に通知をスケジュール"""
+        # ゲーム予告メッセージ（日付変更5分前）
+        game_time = "23:55"  # 日付変更5分前
+        schedule.every().day.at(game_time).do(self.send_game_announcement)
+        print(f"🎮 毎日 {game_time} にゲーム予告メッセージをスケジュールしました")
+        
+        # 日付変更通知（0〜5分のランダムな遅延）
+        schedule.every().day.at(self.config.NOTIFICATION_TIME).do(self.notify_date_change_with_delay)
+        print(f"⏰ 毎日 {self.config.NOTIFICATION_TIME} に日付変更通知をスケジュールしました")
+    
+    def send_game_announcement(self):
+        """ゲーム予告メッセージを送信"""
+        print("🎮 ゲーム予告メッセージを送信します...")
+        success = self.send_message(self.config.GAME_ANNOUNCEMENT_MESSAGE)
+        if success:
+            print("✅ ゲーム予告メッセージを送信しました")
+        else:
+            print("❌ ゲーム予告メッセージの送信に失敗しました")
+    
+    def notify_date_change_with_delay(self):
+        """遅延時間を計算して日付変更通知を送信"""
+        import random
+        delay_minutes = random.randint(0, 5)  # 0〜5分のランダムな遅延
+        
+        print(f"🎯 日付変更予測ゲーム結果: {delay_minutes}分遅れ")
+        
+        # 遅延時間分待機
+        if delay_minutes > 0:
+            print(f"⏳ {delay_minutes}分待機中...")
+            time.sleep(delay_minutes * 60)
+        
+        # 日付変更通知を送信
+        self.notify_date_change(delay_minutes)
+    
+    def notify_date_change(self, delay_minutes=0):
         """日付変更通知を送信"""
         current_date = datetime.now().strftime("%Y年%m月%d日")
-        message = self.config.DATE_CHANGE_MESSAGE.format(date=current_date)
+        message = self.config.DATE_CHANGE_MESSAGE.format(date=current_date, delay=delay_minutes)
         
         success = self.send_message(message)
         if success:
-            print(f"📅 日付変更通知を送信しました: {current_date}")
+            print(f"📅 日付変更通知を送信しました: {current_date} (遅延: {delay_minutes}分)")
         else:
             print(f"📅 日付変更通知の送信に失敗しました: {current_date}")
     
@@ -158,11 +193,6 @@ class ChatworkDateChangeBot:
         """テスト時報を送信"""
         print("🧪 テスト時報を実行します...")
         self.notify_date_change()
-    
-    def schedule_daily_notification(self):
-        """毎日の日付変更時刻に通知をスケジュール"""
-        schedule.every().day.at(self.config.NOTIFICATION_TIME).do(self.notify_date_change)
-        print(f"⏰ 毎日 {self.config.NOTIFICATION_TIME} に日付変更通知をスケジュールしました")
     
     def start_webhook_server(self):
         """Webhookサーバーを開始"""

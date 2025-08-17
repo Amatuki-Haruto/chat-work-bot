@@ -162,6 +162,11 @@ class ChatworkDateChangeBot:
         except KeyboardInterrupt:
             print("\n🛑 botを停止しました")
 
+# Flaskアプリケーションのインスタンスを作成
+bot = ChatworkDateChangeBot()
+
+# Flaskアプリケーションをエクスポート（Gunicorn用）
+app = bot.app
+
 if __name__ == "__main__":
-    bot = ChatworkDateChangeBot()
     bot.run()
